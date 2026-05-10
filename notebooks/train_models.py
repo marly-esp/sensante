@@ -200,3 +200,99 @@ print(f"\nProbabilites par classe :")
 for classe, proba in zip(model_loaded.classes_, probas):
     bar = '#' * int(proba * 30)
     print(f"  {classe:8s} : {proba:.1%} {bar}")
+
+    # ===== EXERCICE 1 : Importance des features =====
+importances = model.feature_importances_
+
+print("--- Importance des features ---")
+for name, imp in sorted(zip(feature_cols, importances),
+                        key=lambda x: x[1], reverse=True):
+    bar = '█' * int(imp * 50)
+    print(f"  {name:20s} : {imp:.3f} {bar}")
+
+    le_sexe   = LabelEncoder()
+le_region = LabelEncoder()
+
+df['sexe_encoded'] = le_sexe.fit_transform(df['sexe'])
+
+toutes_les_regions = list(df['region'].unique()) + ['Thies', 'Saint-Louis']
+le_region.fit(sorted(toutes_les_regions))
+df['region_encoded'] = le_region.transform(df['region'])
+
+# ===== EXERCICE 2 : Tester avec d'autres patients =====
+patients_fictifs = [
+    {
+        'nom'        : 'Jeune sans symptomes',
+        'age'        : 17,
+        'sexe'       : 'M',
+        'temperature': 37.0,
+        'tension_sys': 120,
+        'toux'       : False,
+        'fatigue'    : False,
+        'maux_tete'  : False,
+        'region'     : 'Dakar'
+    },
+    {
+        'nom'        : 'Adulte forte fievre',
+        'age'        : 35,
+        'sexe'       : 'F',
+        'temperature': 40.2,
+        'tension_sys': 105,
+        'toux'       : True,
+        'fatigue'    : True,
+        'maux_tete'  : True,
+        'region'     : 'Kaolack'
+    },
+    {
+        'nom'        : 'Patient age avec toux',
+        'age'        : 68,
+        'sexe'       : 'M',
+        'temperature': 38.5,
+        'tension_sys': 145,
+        'toux'       : True,
+        'fatigue'    : True,
+        'maux_tete'  : False,
+        'region'     : 'Louga'
+    }
+]
+
+print("\n--- Predictions pour 3 patients fictifs ---\n")
+for p in patients_fictifs:
+    sexe_enc   = le_sexe_loaded.transform([p['sexe']])[0]
+    region_enc = le_region_loaded.transform([p['region']])[0]
+
+    features = [
+        p['age'],
+        sexe_enc,
+        p['temperature'],
+        p['tension_sys'],
+        int(p['toux']),
+        int(p['fatigue']),
+        int(p['maux_tete']),
+        region_enc
+    ]
+
+    diagnostic = model_loaded.predict([features])[0]
+    probas     = model_loaded.predict_proba([features])[0]
+    proba_max  = probas.max()
+
+    print(f"  Patient     : {p['nom']}")
+    print(f"  Age / Sexe  : {p['age']} ans, {p['sexe']}")
+    print(f"  Temperature : {p['temperature']} C")
+    print(f"  Diagnostic  : {diagnostic} ({proba_max:.1%})")
+    print()
+
+    # ===== EXERCICE 3 : Reflexion =====
+reflexion = """
+Le modele atteint 89% d'accuracy, ce qui signifie qu'il se trompe sur 11 patients
+sur 100. Dans un contexte medical reel, ce taux d'erreur peut avoir des consequences
+graves. Un faux negatif (patient malade diagnostique sain) peut retarder un traitement
+urgent, notamment pour le paludisme ou la typhoide qui peuvent etre mortels sans prise
+en charge rapide. Un faux positif (patient sain diagnostique malade) entraine un
+traitement inutile, des effets secondaires et un cout supplementaire pour le patient.
+En medecine, un seuil de 95% minimum est generalement requis, avec une attention
+particuliere a la sensibilite (recall) pour ne manquer aucun cas grave. Ce modele
+doit donc rester un outil d'aide a la decision et jamais remplacer un medecin.
+"""
+print("--- Exercice 3 : Reflexion ---")
+print(reflexion)
