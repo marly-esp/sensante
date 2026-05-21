@@ -114,6 +114,29 @@
       </div>
 
     </div>
+
+    <!-- Historique des consultations -->
+    <div id="historique-section" class="mt-6 hidden">
+      <div class="bg-white rounded-xl shadow-md p-6">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">📋 Historique des consultations</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="bg-gray-50 text-gray-600">
+                <th class="text-left p-3 rounded-l-lg">#</th>
+                <th class="text-left p-3">Âge</th>
+                <th class="text-left p-3">Sexe</th>
+                <th class="text-left p-3">Diagnostic</th>
+                <th class="text-left p-3 rounded-r-lg">Probabilité</th>
+              </tr>
+            </thead>
+            <tbody id="historique-body">
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
   </main>
 
   <!-- Footer -->
@@ -124,6 +147,7 @@
   <!-- JavaScript -->
   <script>
     const API_URL = "http://localhost:8000";
+    const historique = [];
 
     function afficherChargement() {
       const section = document.getElementById("result-section");
@@ -135,17 +159,54 @@
       `;
     }
 
+    function afficherHistorique() {
+      const section = document.getElementById("historique-section");
+      const body    = document.getElementById("historique-body");
+
+      section.classList.remove("hidden");
+
+      const icones = {
+        paludisme : "🦟",
+        grippe    : "🤧",
+        typhoide  : "🌡️",
+        sain      : "✅"
+      };
+
+      body.innerHTML = historique.map((c, i) => `
+        <tr class="border-t border-gray-100 hover:bg-gray-50">
+          <td class="p-3 text-gray-400">${i + 1}</td>
+          <td class="p-3">${c.age} ans</td>
+          <td class="p-3">${c.sexe === 'F' ? 'Féminin' : 'Masculin'}</td>
+          <td class="p-3 font-medium">${icones[c.diagnostic] || '🩺'} ${c.diagnostic.toUpperCase()}</td>
+          <td class="p-3 font-bold">${c.probabilite}%</td>
+        </tr>
+      `).join("");
+    }
+
     function afficherResultat(r) {
       const couleurs = {
-        palu   : { bg: "bg-red-100",    text: "text-red-800",    bar: "bg-red-500",    badge: "bg-red-500"    },
-        grippe : { bg: "bg-orange-100", text: "text-orange-800", bar: "bg-orange-500", badge: "bg-orange-500" },
-        typh   : { bg: "bg-yellow-100", text: "text-yellow-800", bar: "bg-yellow-500", badge: "bg-yellow-500" },
-        sain   : { bg: "bg-green-100",  text: "text-green-800",  bar: "bg-green-500",  badge: "bg-green-500"  }
+        paludisme : { bg: "bg-red-100",    text: "text-red-800",    bar: "bg-red-500",    badge: "bg-red-500"    },
+        grippe    : { bg: "bg-orange-100", text: "text-orange-800", bar: "bg-orange-500", badge: "bg-orange-500" },
+        typhoide  : { bg: "bg-yellow-100", text: "text-yellow-800", bar: "bg-yellow-500", badge: "bg-yellow-500" },
+        sain      : { bg: "bg-green-100",  text: "text-green-800",  bar: "bg-green-500",  badge: "bg-green-500"  }
+      };
+
+      const icones = {
+        paludisme : "🦟",
+        grippe    : "🤧",
+        typhoide  : "🌡️",
+        sain      : "✅"
       };
 
       const c   = couleurs[r.diagnostic] || couleurs["sain"];
       const pct = Math.round(r.probabilite * 100);
       const section = document.getElementById("result-section");
+
+      // Ajouter dans l'historique (max 5)
+      const age  = parseInt(document.getElementById("age").value);
+      const sexe = document.getElementById("sexe").value;
+      historique.unshift({ age, sexe, diagnostic: r.diagnostic, probabilite: pct });
+      if (historique.length > 5) historique.pop();
 
       section.innerHTML = `
         <div class="bg-white rounded-xl shadow-md p-6">
@@ -153,7 +214,7 @@
 
           <div class="${c.bg} rounded-lg p-4 mb-4">
             <p class="text-sm text-gray-600">Diagnostic :</p>
-            <p class="text-2xl font-bold ${c.text} uppercase mt-1">${r.diagnostic}</p>
+            <p class="text-2xl font-bold ${c.text} uppercase mt-1">${icones[r.diagnostic] || '🩺'} ${r.diagnostic}</p>
           </div>
 
           <div class="mb-4">
@@ -176,6 +237,9 @@
           </div>
         </div>
       `;
+
+      // Mettre à jour l'historique
+      afficherHistorique();
     }
 
     function afficherErreur(msg) {
