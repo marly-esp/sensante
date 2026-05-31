@@ -10,7 +10,6 @@
 
 <body class="bg-gray-50 min-h-screen">
 
-  <!-- Header -->
   <header class="bg-blue-600 text-white py-4 shadow-lg">
     <div class="max-w-4xl mx-auto px-4">
       <h1 class="text-2xl font-bold">SenSante</h1>
@@ -18,11 +17,9 @@
     </div>
   </header>
 
-  <!-- Contenu principal -->
   <main class="max-w-4xl mx-auto px-4 py-8">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-      <!-- Colonne gauche : formulaire -->
       <div id="form-section" class="bg-white rounded-xl shadow-md p-6">
         <h2 class="text-xl font-bold text-gray-800 mb-4">Symptômes du patient</h2>
 
@@ -95,7 +92,6 @@
         </button>
       </div>
 
-      <!-- Colonne droite : résultat -->
       <div id="result-section">
         <div class="bg-white rounded-xl shadow-md p-6 text-center text-gray-400">
           <p class="text-4xl mb-3">&#129658;</p>
@@ -106,7 +102,6 @@
 
     </div>
 
-    <!-- Historique -->
     <div id="historique-section" class="mt-6 hidden">
       <div class="bg-white rounded-xl shadow-md p-6">
         <h2 class="text-xl font-bold text-gray-800 mb-4">📋 Historique des consultations</h2>
@@ -217,6 +212,21 @@
               <p class="text-gray-500 text-sm animate-pulse">Génération en cours...</p>
             </div>
           </div>
+
+          <!-- Modification 1 : Avertissement IA -->
+          <div class="mt-3 bg-red-50 border border-red-300 rounded-lg p-3">
+            <p class="text-red-700 text-xs font-bold">
+              ⚠️ Cette explication est générée par une IA et ne remplace pas un médecin.
+              Consultez un centre de santé pour tout diagnostic.
+            </p>
+          </div>
+
+          <!-- Modification 2 : Bouton centre de santé -->
+          <a href="https://www.google.com/maps/search/centre+de+santé+Sénégal"
+             target="_blank"
+             class="mt-3 w-full block text-center bg-green-600 text-white text-sm font-bold py-2 rounded-lg hover:bg-green-700">
+            🏥 Trouver un centre de santé près de moi
+          </a>
         </div>
       `;
 

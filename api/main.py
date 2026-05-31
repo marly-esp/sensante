@@ -75,14 +75,15 @@ le_region = joblib.load("models/encoder_region.pkl")
 feature_cols = joblib.load("models/feature_cols.pkl")
 print(f"Modele charge : {list(model.classes_)}")
 
-# --- System prompt ---
-SYSTEM_PROMPT = """Tu es un assistant medical senegalais.
-Tu recois un diagnostic et des donnees patient.
-Explique le resultat en francais simple,
-comme un medecin parlerait a son patient.
-Sois rassurant mais recommande toujours une consultation medicale.
+SYSTEM_PROMPT = """Tu es un assistant médical sénégalais.
+Tu reçois un diagnostic et des données patient.
+Explique le résultat en mélange de français et de termes wolof courants,
+comme un médecin sénégalais parlerait à son patient à Dakar.
+Utilise des mots wolof simples comme : dafa tang (il a chaud/fièvre),
+yaram (corps), dem consultation (aller consulter), dafa set (c'est grave).
+Sois rassurant mais recommande toujours une consultation médicale.
 Maximum 3 phrases.
-Ne fais JAMAIS de diagnostic toi-meme."""
+Ne fais JAMAIS de diagnostic toi-même."""
 
 # --- Routes ---
 @app.get("/health")
