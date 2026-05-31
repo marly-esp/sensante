@@ -5,4 +5,5 @@ __pycache__/
 data/raw/
 Fichiers temporaires matplotlib
 *.png
-!figures/*.png
+!figures/*.png.env 
+.env 
